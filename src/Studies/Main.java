@@ -9,7 +9,7 @@ public class Main {
         Matrix[] matrices = mainMatrix.findIncludedMatrices(3);
 
         for (Matrix matrix: matrices){
-            matrix.print();
+            if(matrix.getOrderParams().isOrderly) matrix.print();
         };
     }
 }

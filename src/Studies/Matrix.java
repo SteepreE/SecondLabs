@@ -4,8 +4,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Matrix {
-    private boolean isOrderly;
-    private String orderType;
+    private OrderParams orderParams;
 
     private final int rowsCount;
     private final int colsCount;
@@ -18,7 +17,8 @@ public class Matrix {
 
         this.matrix = new int[rowsCount][colsCount];
         fillRand();
-        checkOrderParams();
+
+        orderParams = new OrderParams(this.matrix);
     }
 
     public Matrix(int rows, int cols){
@@ -27,7 +27,8 @@ public class Matrix {
 
         this.matrix = new int[rowsCount][colsCount];
         fillRand();
-        checkOrderParams();
+
+        orderParams = new OrderParams(this.matrix);
     }
 
     public Matrix(int[][] matrix){
@@ -35,7 +36,8 @@ public class Matrix {
         this.colsCount = matrix[0].length;
 
         this.matrix = matrix;
-        checkOrderParams();
+
+        orderParams = new OrderParams(this.matrix);
     }
 
     public void fill(){
@@ -48,7 +50,7 @@ public class Matrix {
             }
         }
 
-        checkOrderParams();
+        orderParams = new OrderParams(this.matrix);
     }
 
     private void fillRand(){
@@ -109,42 +111,8 @@ public class Matrix {
         return new Matrix(tempMatrix);
     }
 
-    private void checkOrderParams(){
-        boolean nextIsMore;
-        int i=1;
-
-        while (matrix[i-1][i-1]==matrix[i][i]){
-            i++;
-            if (i==matrix.length){
-                isOrderly = true;
-                orderType = "Все элементы равны";
-                return;
-            }
-        }
-
-        nextIsMore = (matrix[i-1][i-1]<matrix[i][i]);
-
-        while (i < matrix.length){
-            if (    (matrix[i - 1][i - 1] > matrix[i][i] && nextIsMore) ||
-                    (matrix[i - 1][i - 1] < matrix[i][i] && !nextIsMore)){
-                isOrderly = false;
-                orderType = "Не упорядочна";
-                return;
-            }
-            i++;
-        }
-
-        String orderedBy = (nextIsMore) ? "по возрастанию" : "по убыванию";
-        isOrderly = true;
-        orderType = "Упорядочна " + orderedBy;
-    }
-
-    public boolean isOrderly() {
-        return isOrderly;
-    }
-
-    public String getOrderType() {
-        return orderType;
+    public OrderParams getOrderParams() {
+        return orderParams;
     }
 }
 
