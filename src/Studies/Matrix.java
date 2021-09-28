@@ -9,6 +9,8 @@ public class Matrix {
     private final int rowsCount;
     private final int colsCount;
 
+    private boolean isTempMatrix = false;
+
     private final int[][] matrix;
 
     public Matrix(int size){
@@ -18,7 +20,7 @@ public class Matrix {
         this.matrix = new int[rowsCount][colsCount];
         fillRand();
 
-        orderParams = new OrderParams(this.matrix);
+        orderParams = new OrderParams(matrix);
     }
 
     public Matrix(int rows, int cols){
@@ -28,7 +30,7 @@ public class Matrix {
         this.matrix = new int[rowsCount][colsCount];
         fillRand();
 
-        orderParams = new OrderParams(this.matrix);
+        orderParams = new OrderParams(matrix);
     }
 
     public Matrix(int[][] matrix){
@@ -37,7 +39,16 @@ public class Matrix {
 
         this.matrix = matrix;
 
-        orderParams = new OrderParams(this.matrix);
+        orderParams = new OrderParams(matrix);
+    }
+
+    public Matrix(int[][] matrix, boolean isTempMatrix){
+        this.rowsCount = matrix.length;
+        this.colsCount = matrix[0].length;
+
+        this.isTempMatrix = isTempMatrix;
+
+        this.matrix = matrix;
     }
 
     public void fill(){
@@ -73,16 +84,58 @@ public class Matrix {
         System.out.println();
     }
 
-    public int[][] getTransposedMatrix(){
-        int[][] tMatrix = matrix;
+    public void printSpiral(boolean isFromStart){
+        Matrix tempMatrix;
 
-        for (int row = 0; row < rowsCount; row++){
-            for (int col = 0; col < colsCount; col++){
-                tMatrix[row][col] = tMatrix[col][row];
+        if (isFromStart) {
+            tempMatrix = this;
+        } else {
+            tempMatrix = getReversedMatrix();
+        }
+
+        while(tempMatrix.matrix.length != 1){
+            for (int col = 0; col < tempMatrix.colsCount; col++){
+                System.out.print(tempMatrix.matrix[0][col] + " ");
+            }
+            tempMatrix = transform(tempMatrix);
+        }
+        System.out.println(tempMatrix.matrix[0][0]);
+    }
+
+    private Matrix transform(Matrix matrix){
+        int[][] tempMatrix = new int[matrix.rowsCount-1][matrix.colsCount];
+
+        for (int row = 0; row < matrix.rowsCount-1; row++){
+            for (int col = 0; col < matrix.colsCount; col++){
+                tempMatrix[row][col] = matrix.matrix[row + 1][matrix.colsCount - col - 1];
             }
         }
 
-        return tMatrix;
+        return new Matrix(tempMatrix, true).getTransposedMatrix();
+    }
+
+    public Matrix getTransposedMatrix(){
+        int[][] tMatrix = new int[colsCount][rowsCount];
+
+        for (int row = 0; row < colsCount; row++){
+            for (int col = 0; col < rowsCount; col++){
+                tMatrix[row][col] = matrix[col][row];
+            }
+        }
+
+        return (isTempMatrix) ? new Matrix(tMatrix, true) : new Matrix(tMatrix);
+    }
+
+    public Matrix getReversedMatrix(){
+        int[][] reversedMatrix = new int[rowsCount][colsCount];
+
+        for (int row = 0; row < rowsCount; row++){
+            for (int col = 0; col < colsCount; col++){
+                reversedMatrix[row][col] = matrix[rowsCount - row - 1][colsCount - col - 1];
+            }
+        }
+
+        return (isTempMatrix) ? new Matrix(reversedMatrix, true) : new Matrix(reversedMatrix);
     }
 
     public Matrix[] findIncludedMatrices(int size){
@@ -90,8 +143,8 @@ public class Matrix {
         Matrix[] matrices = new Matrix[matrixCounter];
 
         matrixCounter = 0;
-        for (int row = 0; row <rowsCount - size + 1; row++){
-            for (int col = 0; col <colsCount - size +1; col++){
+        for (int row = 0; row < rowsCount - size + 1; row++){
+            for (int col = 0; col < colsCount - size +1; col++){
                 matrices[matrixCounter++] = findMatrix(size, row, col);
             }
         }
@@ -99,20 +152,19 @@ public class Matrix {
         return matrices;
     }
 
-    private Matrix findMatrix(int size, int row, int col){
+    private Matrix findMatrix(int size, int currentRow, int currentCol){
         int[][] tempMatrix = new int[size][size];
 
-        for (int i=0; i<size; i++){
-            for (int j=0; j<size; j++){
-                tempMatrix[i][j] = this.matrix[row + i][col + j];
+        for (int row = 0; row < size; row++){
+            for (int col = 0; col < size; col++){
+                tempMatrix[row][col] = this.matrix[currentRow + row][currentCol + col];
             }
         }
 
         return new Matrix(tempMatrix);
     }
 
-    public OrderParams getOrderParams() {
+    public OrderParams getOrderParams(){
         return orderParams;
     }
 }
-

@@ -9,7 +9,9 @@ public class Main {
         Matrix[] matrices = mainMatrix.findIncludedMatrices(3);
 
         for (Matrix matrix: matrices){
-            if(matrix.getOrderParams().isOrderly) matrix.print();
+            System.out.println(matrix.getOrderParams().orderType);
+            matrix.printSpiral(true);
+            matrix.print();
         };
     }
 }
