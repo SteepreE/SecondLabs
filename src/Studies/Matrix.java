@@ -9,8 +9,6 @@ public class Matrix {
     private final int rowsCount;
     private final int colsCount;
 
-    private boolean isTempMatrix = false;
-
     private final int[][] matrix;
 
     public Matrix(int size){
@@ -40,15 +38,6 @@ public class Matrix {
         this.matrix = matrix;
 
         orderParams = new OrderParams(matrix);
-    }
-
-    public Matrix(int[][] matrix, boolean isTempMatrix){
-        this.rowsCount = matrix.length;
-        this.colsCount = matrix[0].length;
-
-        this.isTempMatrix = isTempMatrix;
-
-        this.matrix = matrix;
     }
 
     public void fill(){
@@ -93,13 +82,37 @@ public class Matrix {
             tempMatrix = getReversedMatrix();
         }
 
-        while(tempMatrix.matrix.length != 1){
-            for (int col = 0; col < tempMatrix.colsCount; col++){
-                System.out.print(tempMatrix.matrix[0][col] + " ");
+        int numbersCounter = 0;
+
+        int startCol=0, startRow=0;
+        int endCol=tempMatrix.rowsCount-1, endRow=tempMatrix.colsCount-1;
+
+        while(numbersCounter<tempMatrix.rowsCount*tempMatrix.colsCount){
+            for (int i=startCol; i<=endCol; i++){
+                System.out.print(tempMatrix.matrix[startRow][i]+" ");
+                numbersCounter++;
             }
-            tempMatrix = transform(tempMatrix);
+            startRow++;
+
+            for (int i=startRow; i<=endRow; i++){
+                System.out.print(tempMatrix.matrix[i][endCol]+" ");
+                numbersCounter++;
+            }
+            endCol--;
+
+            for (int i=endCol; i>=startCol; i--){
+                System.out.print(tempMatrix.matrix[endRow][i]+" ");
+                numbersCounter++;
+            }
+            endRow--;
+
+            for (int i=endRow; i>=startRow; i--){
+                System.out.print(tempMatrix.matrix[i][startCol]+" ");
+                numbersCounter++;
+            }
+            startCol++;
         }
-        System.out.println(tempMatrix.matrix[0][0]);
+        System.out.println();
     }
 
     private Matrix transform(Matrix matrix){
@@ -111,7 +124,7 @@ public class Matrix {
             }
         }
 
-        return new Matrix(tempMatrix, true).getTransposedMatrix();
+        return new Matrix(tempMatrix).getTransposedMatrix();
     }
 
     public Matrix getTransposedMatrix(){
@@ -123,7 +136,7 @@ public class Matrix {
             }
         }
 
-        return (isTempMatrix) ? new Matrix(tMatrix, true) : new Matrix(tMatrix);
+        return new Matrix(tMatrix);
     }
 
     public Matrix getReversedMatrix(){
@@ -135,7 +148,7 @@ public class Matrix {
             }
         }
 
-        return (isTempMatrix) ? new Matrix(reversedMatrix, true) : new Matrix(reversedMatrix);
+        return new Matrix(reversedMatrix);
     }
 
     public Matrix[] findIncludedMatrices(int size){
