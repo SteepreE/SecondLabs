@@ -14,5 +14,13 @@ public class Main {
             matrix.printSpiral(true);
             matrix.print();
         };
+
+        int[] numbers = new CustomString("46 75 89 90").getAllNumbers();
+
+        for (int number: numbers){
+            if (number%5==0){
+                System.out.println(number);
+            }
+        }
     }
 }
